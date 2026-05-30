@@ -19,10 +19,12 @@
     "@fastify/multipart": "^9.3.0",
     "@fastify/swagger": "^9.5.2",
     "@fastify/swagger-ui": "^5.2.3",
+    "@google/genai": "^2.7.0",
     "@prisma/client": "^6.19.0",
     "bcrypt": "^6.0.0",
     "dotenv": "17.4.2",
     "fastify": "5.8.5",
+    "pdf-parse": "^2.4.5",
     "zod": "^4.1.13"
   },
   "devDependencies": {

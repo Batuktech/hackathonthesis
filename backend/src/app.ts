@@ -18,6 +18,7 @@ import { defenseRoutes } from "./modules/defenses/routes";
 import { critiqueRoutes } from "./modules/critiques/routes";
 import { statisticsRoutes } from "./modules/statistics/routes";
 import { dashboardRoutes } from "./modules/dashboard/routes";
+import { defenseEvaluationRoutes } from "./modules/defenseEvaluation/routes";
 
 export async function buildApp() {
   const app = Fastify({
@@ -44,6 +45,7 @@ export async function buildApp() {
   await app.register(critiqueRoutes, { prefix: "/api" });
   await app.register(statisticsRoutes, { prefix: "/api" });
   await app.register(dashboardRoutes, { prefix: "/api" });
+  await app.register(defenseEvaluationRoutes, { prefix: "/api" });
 
   return app;
 }

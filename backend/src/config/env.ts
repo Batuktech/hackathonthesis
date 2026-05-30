@@ -19,4 +19,6 @@ export const env = {
   jwtSecret: process.env.JWT_SECRET ?? "change-this-secret",
   uploadDir: process.env.UPLOAD_DIR ?? "uploads",
   logLevel: process.env.LOG_LEVEL ?? "debug",
+  geminiApiKey: process.env.GEMINI_API_KEY ?? "",
+  geminiModel: process.env.GEMINI_MODEL ?? "gemini-flash-lite-latest",
 };
