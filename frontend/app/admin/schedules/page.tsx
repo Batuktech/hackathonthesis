@@ -13,6 +13,8 @@ export default function AdminSchedulesPage() {
       description="Улирал, хамгаалалтын шат, өдөр, өрөөний мэдээлэл нэмнэ."
       load={api.getSchedules}
       create={api.createSchedule}
+      update={api.updateSchedule}
+      remove={api.deleteSchedule}
       fields={[
         { name: "title", label: "Гарчиг" },
         { name: "academicSeasonId", label: "Улирал", options: options.seasons.map((s) => [s.id, s.name]) },

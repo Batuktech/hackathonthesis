@@ -10,6 +10,8 @@ export default function AdminUsersPage() {
       description="Оюутан, удирдагч багш, шүүмж багш болон админ хэрэглэгч нэмнэ."
       load={api.getUsers}
       create={api.createUser}
+      update={api.updateUser}
+      remove={api.deleteUser}
       fields={[
         { name: "name", label: "Нэр" },
         { name: "email", label: "Имэйл" },

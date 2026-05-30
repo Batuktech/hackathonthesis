@@ -4,6 +4,13 @@ import { prisma } from "../../config/prisma";
 import { forbidden, notFound } from "../../shared/errors";
 import { created, ok } from "../../shared/response";
 
+function normalizeEmptyStrings(body: unknown) {
+  if (!body || typeof body !== "object") return body;
+  return Object.fromEntries(
+    Object.entries(body as Record<string, unknown>).map(([key, value]) => [key, value === "" ? undefined : value]),
+  );
+}
+
 const groupSchema = z.object({
   name: z.string().min(1),
   academicSeasonId: z.string(),
@@ -21,11 +28,11 @@ export async function critiqueGroupRoutes(app: FastifyInstance) {
   app.get("/critique-groups", { preHandler: app.requireAuth }, async () => ok(await prisma.critiqueGroup.findMany({ include, orderBy: { createdAt: "desc" } })));
   app.post("/admin/critique-groups", { preHandler: app.requireAdmin }, async (request, reply) => {
     reply.status(201);
-    return created(await prisma.critiqueGroup.create({ data: groupSchema.parse(request.body), include }));
+    return created(await prisma.critiqueGroup.create({ data: groupSchema.parse(normalizeEmptyStrings(request.body)), include }));
   });
   app.patch("/admin/critique-groups/:id", { preHandler: app.requireAdmin }, async (request) => {
     const { id } = z.object({ id: z.string() }).parse(request.params);
-    return ok(await prisma.critiqueGroup.update({ where: { id }, data: groupSchema.partial().parse(request.body), include }));
+    return ok(await prisma.critiqueGroup.update({ where: { id }, data: groupSchema.partial().parse(normalizeEmptyStrings(request.body)), include }));
   });
   app.delete("/admin/critique-groups/:id", { preHandler: app.requireAdmin }, async (request) => {
     const { id } = z.object({ id: z.string() }).parse(request.params);

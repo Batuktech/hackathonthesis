@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Providers } from "@/components/Providers";
 
 export const metadata: Metadata = {
   title: "Диплом хамгаалалтын систем",
@@ -10,9 +11,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="mn">
       <body>
-        <div className="aurora" />
-        <div className="grid-mask" />
-        {children}
+        <Providers>
+          <div className="aurora" />
+          <div className="grid-mask" />
+          {children}
+        </Providers>
       </body>
     </html>
   );

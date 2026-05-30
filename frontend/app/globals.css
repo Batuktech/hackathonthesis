@@ -3,6 +3,22 @@
 :root {
   --background: #f5f5f5;
   --foreground: #111111;
+  --card: #ffffff;
+  --card-foreground: #111111;
+  --primary: #111111;
+  --primary-foreground: #ffffff;
+  --secondary: #f5f5f5;
+  --secondary-foreground: #111111;
+  --muted: #f5f5f5;
+  --muted-foreground: #737373;
+  --accent: #f5f5f5;
+  --accent-foreground: #111111;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #e5e5e5;
+  --input: #e5e5e5;
+  --ring: #111111;
+  --radius: 0.75rem;
 }
 
 * {
@@ -12,13 +28,17 @@
 html {
   min-width: 320px;
   background: var(--background);
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
 }
 
 button,
@@ -31,11 +51,40 @@ textarea {
 @keyframes lift-in {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-soft {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
   }
 }
 
@@ -45,72 +94,197 @@ textarea {
 }
 
 .glass {
-  border: 1px solid #d4d4d4;
-  background: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   color: #111111;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
 }
 
 .glow-button {
   background: #111111;
   color: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.glow-button:hover {
+  box-shadow: 0 0 20px rgba(17, 17, 17, 0.3);
+  transform: translateY(-1px);
 }
 
 .shimmer-text {
-  color: inherit;
-  text-decoration: underline;
-  text-decoration-thickness: 0.12em;
-  text-underline-offset: 0.12em;
+  background: linear-gradient(
+    90deg,
+    #111111 0%,
+    #666666 25%,
+    #111111 50%,
+    #666666 75%,
+    #111111 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 3s linear infinite;
+}
+
+@keyframes shimmer {
+  to {
+    background-position: 200% center;
+  }
 }
 
 .float-card {
-  animation: lift-in 220ms ease-out both;
+  animation: lift-in 300ms ease-out both;
 }
 
 .data-input {
   width: 100%;
-  border: 1px solid #d4d4d4;
-  border-radius: 10px;
+  border: 1.5px solid #e5e5e5;
+  border-radius: 12px;
   background: #ffffff;
   color: #111111;
-  padding: 10px 12px;
+  padding: 12px 14px;
   outline: none;
+  transition: all 0.2s ease;
+  font-size: 14px;
 }
 
 .data-input:focus {
   border-color: #111111;
-  box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.08);
+  box-shadow: 0 0 0 4px rgba(17, 17, 17, 0.06);
+}
+
+.data-input:hover:not(:focus) {
+  border-color: #d4d4d4;
 }
 
 .data-label {
   display: grid;
-  gap: 6px;
-  color: #404040;
+  gap: 8px;
+  color: #525252;
   font-size: 13px;
   font-weight: 600;
 }
 
 .data-button {
-  border-radius: 10px;
+  border-radius: 12px;
   background: #111111;
   color: #ffffff;
-  padding: 10px 14px;
+  padding: 12px 18px;
   font-weight: 700;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.data-button:hover:not(:disabled) {
+  background: #262626;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(17, 17, 17, 0.15);
+}
+
+.data-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.data-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .data-button.secondary {
-  border: 1px solid #d4d4d4;
+  border: 1.5px solid #e5e5e5;
   background: #ffffff;
   color: #111111;
+}
+
+.data-button.secondary:hover:not(:disabled) {
+  background: #f5f5f5;
+  border-color: #d4d4d4;
 }
 
 .status-pill {
   display: inline-flex;
   align-items: center;
-  border: 1px solid #d4d4d4;
+  border: 1px solid #e5e5e5;
   border-radius: 999px;
-  padding: 4px 8px;
+  padding: 5px 12px;
   font-size: 12px;
-  color: #404040;
+  font-weight: 500;
+  color: #525252;
   background: #fafafa;
+  transition: all 0.2s ease;
+}
+
+.status-pill:hover {
+  border-color: #d4d4d4;
+  background: #f5f5f5;
+}
+
+/* Table styles */
+table {
+  border-collapse: collapse;
+}
+
+th {
+  font-weight: 600;
+  letter-spacing: 0.025em;
+}
+
+tr {
+  transition: background-color 0.15s ease;
+}
+
+tr:hover {
+  background-color: #fafafa;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d4d4d4;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a3a3a3;
+}
+
+/* Selection styling */
+::selection {
+  background: rgba(17, 17, 17, 0.1);
+  color: inherit;
+}
+
+/* Focus visible styling */
+:focus-visible {
+  outline: 2px solid #111111;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
