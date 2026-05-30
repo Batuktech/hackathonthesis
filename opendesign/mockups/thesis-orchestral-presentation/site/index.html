@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Дипломын хамгаалалтын системийн танилцуулга</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f8f6f1;
+      --ink: #1d2428;
+      --muted: #586065;
+      --teal: #00786c;
+      --brick: #ad4b37;
+      --gold: #cc9a46;
+      --dark: #132d31;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Aptos, "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      display: grid;
+      place-items: center;
+      padding: 32px;
+    }
+    main {
+      width: min(980px, 100%);
+      background: #fff;
+      border: 1px solid #d8d1c4;
+      border-radius: 18px;
+      padding: clamp(28px, 5vw, 64px);
+      box-shadow: 0 24px 80px rgba(19, 45, 49, 0.12);
+    }
+    .eyebrow {
+      color: var(--brick);
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-size: 13px;
+      margin-bottom: 18px;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(36px, 6vw, 72px);
+      line-height: 1.02;
+      letter-spacing: 0;
+      max-width: 820px;
+    }
+    p {
+      color: var(--muted);
+      font-size: clamp(18px, 2vw, 22px);
+      line-height: 1.55;
+      max-width: 760px;
+      margin: 24px 0 0;
+    }
+    a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 52px;
+      margin-top: 34px;
+      padding: 0 24px;
+      background: var(--teal);
+      color: white;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 18px;
+    }
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 30px;
+    }
+    .meta span {
+      border: 1px solid #d8d1c4;
+      border-radius: 999px;
+      padding: 8px 12px;
+      color: var(--dark);
+      font-weight: 700;
+      background: #fbfaf7;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="eyebrow">Монгол хэлний .pptx танилцуулга</div>
+    <h1>Дипломын ажлын хамгаалалтын удирдлагын систем</h1>
+    <p>
+      Төслийн зорилго, хэрэглэгчийн дүрүүд, хамгаалалтын workflow, архитектур,
+      өгөгдлийн загвар, AI model orchestration, CI/CD болон Hetzner deploy-ийг 11 слайдаар товч бөгөөд ойлгомжтой тайлбарласан.
+    </p>
+    <a href="./thesis-orchestral-defense-mn.pptx" download>.pptx файл татах</a>
+    <div class="meta">
+      <span>11 слайд</span>
+      <span>Next.js + Fastify</span>
+      <span>Prisma + PostgreSQL</span>
+      <span>Docker Compose</span>
+    </div>
+  </main>
+</body>
+</html>

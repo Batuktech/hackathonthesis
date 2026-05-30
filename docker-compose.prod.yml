@@ -6,9 +6,9 @@ services:
       - path: .env
         required: false
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: thesis_orchestral
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-thesis_orchestral}
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
@@ -25,9 +25,13 @@ services:
       - path: .env
         required: false
     environment:
-      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/thesis_orchestral
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL in .env}
       PORT: 4001
+      CORS_ORIGIN: ${CORS_ORIGIN:?Set CORS_ORIGIN in .env}
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
       UPLOAD_DIR: uploads
+      LOG_LEVEL: ${LOG_LEVEL:-info}
     ports:
       - "127.0.0.1:4001:4001"
     volumes:
@@ -45,12 +49,15 @@ services:
   frontend:
     build:
       context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:?Set NEXT_PUBLIC_API_URL in .env}
     restart: unless-stopped
     env_file:
       - path: .env
         required: false
     environment:
       NODE_ENV: production
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:?Set NEXT_PUBLIC_API_URL in .env}
       PORT: 3000
       HOSTNAME: 0.0.0.0
     ports:

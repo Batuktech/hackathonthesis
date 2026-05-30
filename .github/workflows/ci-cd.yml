@@ -1,0 +1,129 @@
+name: CI/CD
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Backend checks
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Enable pnpm
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: pnpm prisma:generate
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Build
+        run: pnpm build
+
+  frontend:
+    name: Frontend checks
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    env:
+      NEXT_PUBLIC_API_URL: http://localhost:4001/api
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Enable pnpm
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Build
+        run: pnpm build
+
+  docker:
+    name: Docker production build
+    runs-on: ubuntu-latest
+    needs:
+      - backend
+      - frontend
+    env:
+      NEXT_PUBLIC_API_URL: http://localhost:4001/api
+      CORS_ORIGIN: http://localhost:3000
+      JWT_SECRET: ci-only-secret
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: thesis_orchestral
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/thesis_orchestral
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate production compose
+        run: docker compose -f docker-compose.prod.yml config
+
+      - name: Build production images
+        run: docker compose -f docker-compose.prod.yml build
+
+  deploy:
+    name: Deploy to Hetzner
+    runs-on: ubuntu-latest
+    needs:
+      - docker
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment: production
+    env:
+      HETZNER_HOST: ${{ secrets.HETZNER_HOST }}
+      HETZNER_USER: ${{ secrets.HETZNER_USER }}
+      HETZNER_PORT: ${{ secrets.HETZNER_PORT }}
+      HETZNER_APP_DIR: ${{ secrets.HETZNER_APP_DIR }}
+    steps:
+      - name: Configure SSH
+        run: |
+          set -eu
+          test -n "$HETZNER_HOST"
+          test -n "$HETZNER_USER"
+          PORT="${HETZNER_PORT:-22}"
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "${{ secrets.HETZNER_SSH_KEY }}" > ~/.ssh/hetzner_deploy_key
+          chmod 600 ~/.ssh/hetzner_deploy_key
+          ssh-keyscan -p "$PORT" -H "$HETZNER_HOST" >> ~/.ssh/known_hosts
+
+      - name: Deploy exact commit
+        run: |
+          set -eu
+          PORT="${HETZNER_PORT:-22}"
+          APP_DIR="${HETZNER_APP_DIR:-/opt/thesis-orchestral-system}"
+          ssh -i ~/.ssh/hetzner_deploy_key -p "$PORT" "$HETZNER_USER@$HETZNER_HOST" \
+            "cd '$APP_DIR' && DEPLOY_REF='${{ github.sha }}' COMPOSE_FILE=docker-compose.prod.yml sh deploy/scripts/deploy.sh"

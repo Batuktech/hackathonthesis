@@ -60,10 +60,10 @@ All demo passwords are `password123`.
 ## Production On Hetzner
 
 1. Point DNS `A` records for `thesis.example.com` and `www.thesis.example.com` to the VPS IP.
-2. Copy env:
+2. Copy production env:
 
 ```bash
-cp .env.example .env
+cp .env.production.example .env
 ```
 
 3. Edit `.env`:

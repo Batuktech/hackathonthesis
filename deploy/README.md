@@ -23,7 +23,7 @@ www.thesis.example.com -> VPS_IP
 ```bash
 git clone <repo-url> thesis-orchestral-system
 cd thesis-orchestral-system
-cp .env.example .env
+cp .env.production.example .env
 ```
 
 Edit `.env`:
@@ -32,6 +32,8 @@ Edit `.env`:
 NEXT_PUBLIC_API_URL=https://thesis.example.com/api
 CORS_ORIGIN=https://thesis.example.com
 JWT_SECRET=replace-with-long-random-secret
+POSTGRES_PASSWORD=replace-with-strong-postgres-password
+DATABASE_URL=postgresql://postgres:replace-with-strong-postgres-password@postgres:5432/thesis_orchestral
 ```
 
 Start containers:
@@ -39,7 +41,7 @@ Start containers:
 ```bash
 docker compose -f docker-compose.prod.yml up -d --build
 docker compose -f docker-compose.prod.yml exec backend pnpm prisma:migrate
-docker compose -f docker-compose.prod.yml exec backend pnpm prisma:seed
+docker compose -f docker-compose.prod.yml exec backend pnpm prisma:seed # optional demo data
 ```
 
 ## Nginx
@@ -70,6 +72,39 @@ sudo certbot --nginx -d thesis.example.com -d www.thesis.example.com
 ```bash
 sh deploy/scripts/deploy.sh
 ```
+
+The deploy script validates Compose, builds images, starts PostgreSQL, runs Prisma migrations, starts the stack, then checks `/` and `/health`.
+
+## GitHub Actions CI/CD
+
+The `.github/workflows/ci-cd.yml` workflow runs on pull requests and pushes to `main`:
+
+- Backend install, Prisma client generation, typecheck, and build.
+- Frontend install, typecheck, and build.
+- Production Docker Compose config validation and image build.
+- Deployment to Hetzner after a successful push to `main`.
+
+Create these GitHub repository secrets:
+
+```text
+HETZNER_HOST=your.server.ip.or.domain
+HETZNER_USER=deploy
+HETZNER_SSH_KEY=<private key for the deploy user>
+HETZNER_PORT=22
+HETZNER_APP_DIR=/opt/thesis-orchestral-system
+```
+
+Recommended first-time server layout:
+
+```bash
+sudo mkdir -p /opt/thesis-orchestral-system
+sudo chown "$USER":"$USER" /opt/thesis-orchestral-system
+git clone <repo-url> /opt/thesis-orchestral-system
+cd /opt/thesis-orchestral-system
+cp .env.production.example .env
+```
+
+Set real production values in `.env` on the VPS before enabling automatic deploys. Do not commit `.env`.
 
 ## Logs
 
